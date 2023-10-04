@@ -1,10 +1,18 @@
-[![Report build](https://github.uio.no/2023-s2-in5310-in9310/example-p2/actions/workflows/build.yml/badge.svg?branch=report)](https://github.uio.no/2023-s2-in5310-in9310/example-p2/actions/workflows/build.yml)
-# Example Project Setup
+# Group 06 - Project 2 
 
-This repository can be cloned and used as the basis for project 2 in IN5310/IN9310.
+GitHub repository for the 2nd Project of DL for Image Analysis Autumn 2023 at UiO. 
 
-The `main` branch should contain the code for the main deliverables.  You are encouraged to use a branching model that works for your team, with the restriction that **stable** and working version of the code should be maintained in this branch.
+## Activate environment on educloud
+Activate virtual environment on educloud
+```shell
+source /projects/ec232/venvs/in5310/bin/activate
+```
 
-## Report
+## Run training from shell
+To run conditional VAE training execute (WARNING: currently throws error!):
+```shell
+python src/main.py -v
+```
 
-For the report files, you should put all the files related to them into the `report` branch.  See the [`README.md`](../report/README.md) in that branch for more information on its setup.
+
+
