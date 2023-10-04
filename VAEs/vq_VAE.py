@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from torch.nn import functional as F
-from .types_ import *
+from VAEs.types_ import *
 from abc import abstractmethod
 
 
