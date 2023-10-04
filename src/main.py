@@ -9,6 +9,8 @@ from train import run_ddpm_training
 def main():
     if MODEL == "DDPM":
         images, labels = load_dataset()
+        print(images)
+        print(labels)
         dls = get_dataloader(images, labels)
 
         # Run DDPM training

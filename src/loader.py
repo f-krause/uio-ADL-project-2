@@ -5,7 +5,9 @@ import numpy as np
 from PIL import Image
 from config import *
 from datetime import datetime
-from fastai.data import *
+from fastai.data.block import DataBlock, CategoryBlock
+from fastai.vision.data import ImageBlock
+from fastai.data.transforms import Normalize
 
 if DATA_PATH:
     PATH = DATA_PATH
@@ -14,7 +16,8 @@ else:
     if not os.path.isdir(PATH):
         print(datetime.now(), "Loading data locally")
         PATH = "data"
-    print(datetime.now(), "Loading data from educloud server")
+    else:
+        print(datetime.now(), "Loading data from educloud server")
 
 
 def load_dataset():
@@ -32,7 +35,7 @@ def load_dataset():
                 label = np.load(file)
                 labels.append(label)
 
-    if not images:
+    if not images or not labels:
         raise Exception("No data loaded!")
     labels = np.array(labels)[:, :, 1].squeeze()  # only keep label of Moira
     return np.array(images), labels

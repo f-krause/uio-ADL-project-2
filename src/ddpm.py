@@ -1,3 +1,4 @@
+# Partly from https://github.com/fastai/fastdiffusion/blob/master/nbs/tcapelle/Diffusion_models_with_fastai_conditional_cifart_EMA.ipynb
 from fastai.vision.all import *
 from fastai.vision.gan import *
 from fastai.data import *
