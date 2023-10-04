@@ -1,11 +1,9 @@
 # TODO adapt to new case
 import argparse
 from datetime import datetime
-from tqdm import tqdm
-import os
 
-from get_data import get_data
-from train import run_vae_training
+from VAEs.get_data import get_data
+from VAEs.train import run_vae_training
 
 
 # Define some flags to specify parameters of training in shell

@@ -1,10 +1,7 @@
-# TODO adapt to new case
 # TODO include seed!
 import os.path
 import torch
 import time
-import timm
-from timm import optim
 import numpy as np
 from tqdm import tqdm
 from datetime import datetime
@@ -13,7 +10,7 @@ from torch.utils.data import DataLoader
 import torch.nn.functional as F
 
 # import our models
-from cVAE import CVAE
+from VAEs.cVAE import CVAE
 
 # Automatically define torch device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
