@@ -5,4 +5,4 @@ SAVE_MODEL = True
 IMG_SIZE = 32
 BATCH_SIZE = 32
 EPOCHS = 10
-LR = 3e-4
+LR = 3e-5
