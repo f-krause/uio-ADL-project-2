@@ -8,6 +8,8 @@ import torch
 from unet import Unet
 from config import *
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 class ConditionalDDPMCallback(Callback):
     def __init__(self, n_steps, beta_min, beta_max, cfg_scale=0):
@@ -93,13 +95,43 @@ class ConditionalDDPMCallback(Callback):
         if (self.epoch + 1) % 4 == 0:
             with torch.no_grad():
                 xt = self.sample()
-                wandb.log({"preds": [wandb.Image(torch.tensor(im)) for im in xt[0:36]]})
 
     def before_batch(self):
         if not hasattr(self, 'gather_preds'):
             self.before_batch_training()
         else:
             self.before_batch_sampling()
+
+    def get_sample(self, input_dim, label):
+        xt = self.tensor_type(torch.randn(input_dim))
+        xt = xt.to(device)
+        for t in progress_bar(reversed(range(self.n_steps)), total=self.n_steps, leave=False):
+            xt = self.sampling_algo(xt, t, label)
+        return xt
+
+    def save(self, filepath):
+        state = {
+            'n_steps': self.n_steps,
+            'beta_min': self.beta_min,
+            "beta": self.beta,
+            'beta_max': self.beta_max,
+            'cfg_scale': self.cfg_scale,
+            'alpha': self.alpha,
+            "alpha_bar": self.alpha_bar,
+            "sigma": self.sigma,
+        }
+        torch.save(state, filepath)
+
+    def load(self, filepath):
+        state = torch.load(filepath)
+        self.n_steps = state['n_steps']
+        self.beta_min = state['beta_min']
+        self.beta_max = state['beta_max']
+        self.cfg_scale = state['cfg_scale']
+        self.alpha = state['alpha']
+        self.alpha_bar = state["alpha_bar"]
+        self.sigma = state["sigma"]
+        self.beta = state["beta"]
 
 
 class EMA(Callback):
