@@ -41,7 +41,9 @@ def load_dataset():
     return np.array(images), labels
 
 
-def get_dataloader(images, labels):
+def get_dataloader():
+    images, labels = load_dataset()
+
     def pass_index(idx):
         return idx
 
