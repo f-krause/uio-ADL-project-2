@@ -14,6 +14,11 @@ Activate custom virtual environment
 source venv/bin/activate
 ```
 
+Add environment to Jupyter Notebook
+```shell
+python -m ipykernel install --user --name=venv
+```
+
 ## Run training
 To run training execute (WARNING: currently throws error!):
 ```shell
