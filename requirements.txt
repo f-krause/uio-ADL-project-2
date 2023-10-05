@@ -1,0 +1,6 @@
+fastai
+numpy
+pandas
+ipykernel
+einops
+matplotlib
