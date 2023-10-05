@@ -78,14 +78,13 @@ class ConditionalDDPMCallback(Callback):
     #     # predict x_(t-1) in accordance to Algorithm 2 in paper
     #     return xt
 
-    def get_sample(self, input_dim, label, embedding=None):
-        if embedding is None:
-            embedding = self.tensor_type(torch.randn(input_dim))
-        embedding = embedding.to(device)
+    def sample(self):
+        xt = self.generate_noise(self.xb[0])  # a full batch at once!
+        label = torch.arange(10, dtype=torch.long, device=xt.device).repeat(xt.shape[0] // 10 + 1).flatten()[
+                0:xt.shape[0]]
         for t in progress_bar(reversed(range(self.n_steps)), total=self.n_steps, leave=False):
-            images = self.sampling_algo(embedding, t, label)
-
-        return images, embedding
+            xt = self.sampling_algo(xt, t, label)
+        return xt
 
     def before_batch_sampling(self):
         xt = self.sample()
@@ -103,12 +102,14 @@ class ConditionalDDPMCallback(Callback):
         else:
             self.before_batch_sampling()
 
-    def get_sample(self, input_dim, label):
-        xt = self.tensor_type(torch.randn(input_dim))
-        xt = xt.to(device)
+    def get_sample(self, input_dim, label, embedding=None):
+        if embedding is None:
+            embedding = self.tensor_type(torch.randn(input_dim))
+        embedding = embedding.to(device)
         for t in progress_bar(reversed(range(self.n_steps)), total=self.n_steps, leave=False):
-            xt = self.sampling_algo(xt, t, label)
-        return xt
+            images = self.sampling_algo(embedding, t, label)
+
+        return images, embedding
 
     def save(self, filepath):
         state = {
@@ -124,7 +125,10 @@ class ConditionalDDPMCallback(Callback):
         torch.save(state, filepath)
 
     def load(self, filepath):
-        state = torch.load(filepath)
+        if device.type == "cpu":
+            state = torch.load(filepath, map_location=torch.device('cpu'))
+        else:
+            state = torch.load(filepath)
         self.n_steps = state['n_steps']
         self.beta_min = state['beta_min']
         self.beta_max = state['beta_max']
