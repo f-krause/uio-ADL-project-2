@@ -140,7 +140,7 @@ class ConditionalDDPMCallback(Callback):
 
 
 class EMA(Callback):
-    "Exponential Moving average CB"
+    """Exponential Moving average CB"""
 
     def __init__(self, beta=0.995, pct_start=0.3):
         store_attr()

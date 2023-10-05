@@ -4,10 +4,13 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 from fastai.learner import Learner
-
+from torchvision.utils import save_image
+import torch.nn.functional as F
 
 from ddpm import ConditionalDDPMCallback, EMA, ConditionalUnet
 from config import *
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def check_save_path(path):
@@ -18,24 +21,38 @@ def check_save_path(path):
     return path
 
 
-def save_data(model_name, learner, losses):
+def save_learner(model_name, learner, losses):
     """Helper function to save models, losses and images. Prevents file overwriting"""
 
     # Save model
     save_path_model = check_save_path(f"output/{model_name}_model.pth")
     print(datetime.now(), f"Saving model to {save_path_model}")
-    learner.save(save_path_model)
-    # torch.save(model.state_dict(), save_path_model)  # save state dict of model
+    learner.save("learner_debug")
+
+    callback = learner.conditional_ddpm
+    callback.save('models/callback_state.pth')
 
     # Save losses
     # save_path_csv = check_save_path(f"output/losses_{model_name}_model.csv")
     # np.savetxt(save_path_csv, np.array(losses), delimiter=",")  # save losses as csv
 
+
+def generate_images(learner, k=10, store_jpg=True, store_tensors=True):
     # Save images
-    for i in range(10):
-        learner.forward()
-        save_path_img = check_save_path(f"output/{model_name}_img{i}.jpg")
-        # TODO save images
+    pred_imgs, embeddings = learner.conditional_ddpm.get_sample((k, 3, IMG_SIZE, IMG_SIZE), torch.tensor(9).to(device))
+
+    pred_imgs = F.interpolate(pred_imgs, size=(96, 128), mode='bilinear', align_corners=False)  # upsample images
+
+    if store_tensors:
+        torch.save(pred_imgs, "../output/images.pth")
+        torch.save(embeddings)
+
+    if store_jpg:
+        for i, pred_img in enumerate(pred_imgs):
+            save_path_img = check_save_path(f"../output/img_{i}.jpg")
+            save_image(pred_img, save_path_img)
+
+    return pred_imgs
 
 
 def run_ddpm_training(dls, plot_loss=False):
@@ -63,4 +80,4 @@ def run_ddpm_training(dls, plot_loss=False):
         plt.show()
 
     if SAVE_MODEL:
-        save_data("WIP_ddpm", model, losses)
+        save_learner("WIP_ddpm", model, losses)
