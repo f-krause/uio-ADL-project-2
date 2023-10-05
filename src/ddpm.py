@@ -78,13 +78,14 @@ class ConditionalDDPMCallback(Callback):
     #     # predict x_(t-1) in accordance to Algorithm 2 in paper
     #     return xt
 
-    def sample(self):
-        xt = self.generate_noise(self.xb[0])  # a full batch at once!
-        label = torch.arange(10, dtype=torch.long, device=xt.device).repeat(xt.shape[0] // 10 + 1).flatten()[
-                0:xt.shape[0]]
+    def get_sample(self, input_dim, label, embedding=None):
+        if embedding is None:
+            embedding = self.tensor_type(torch.randn(input_dim))
+        embedding = embedding.to(device)
         for t in progress_bar(reversed(range(self.n_steps)), total=self.n_steps, leave=False):
-            xt = self.sampling_algo(xt, t, label)
-        return xt
+            images = self.sampling_algo(embedding, t, label)
+
+        return images, embedding
 
     def before_batch_sampling(self):
         xt = self.sample()
