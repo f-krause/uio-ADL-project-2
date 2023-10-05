@@ -67,17 +67,6 @@ class ConditionalDDPMCallback(Callback):
 
         return xt
 
-    # def sampling_algo_old(self, xt, t, label=None):
-    #     t_batch = torch.full((xt.shape[0],), t, device=xt.device, dtype=torch.long)
-    #     z = self.generate_noise(xt) if t > 0 else torch.zeros_like(xt)
-    #     alpha_t = self.alpha[t] # get noise level at current timestep
-    #     alpha_bar_t = self.alpha_bar[t]
-    #     sigma_t = self.sigma[t]
-    #     xt = 1/torch.sqrt(alpha_t) * (xt - (1-alpha_t)/torch.sqrt(1-alpha_bar_t) * self.model(xt, t_batch, label=label)) + sigma_t*z
-    #          1 / torch.sqrt(alpha) * (x - ((1 - alpha) / (torch.sqrt(1 - alpha_hat))) * predicted_noise) + torch.sqrt(beta) * noise
-    #     # predict x_(t-1) in accordance to Algorithm 2 in paper
-    #     return xt
-
     def sample(self):
         xt = self.generate_noise(self.xb[0])  # a full batch at once!
         label = torch.arange(10, dtype=torch.long, device=xt.device).repeat(xt.shape[0] // 10 + 1).flatten()[

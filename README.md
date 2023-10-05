@@ -33,6 +33,6 @@ Config for training of model in "/output" on A100 GPU:
 > IMG_SIZE = 64 <br/>
 > BATCH_SIZE = 256 <br/>
 > EPOCHS = 100 <br/>
-> LR = 3e-5
+> LR = 3e-4
 
 <br/>
